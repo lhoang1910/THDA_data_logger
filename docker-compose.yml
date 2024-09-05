@@ -1,0 +1,36 @@
+version: '3.8'
+
+networks:
+  thda_networks:
+    driver: bridge
+
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: data_logger
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql:/var/lib/postgresql/data
+    networks:
+      - thda_networks
+
+  data_logger:
+    container_name: data_logger_app
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../data_logger:/app
+    networks:
+      - thda_networks
+    depends_on:
+      - postgresql
+
+volumes:
+  postgresql:
